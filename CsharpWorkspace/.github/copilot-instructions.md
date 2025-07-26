@@ -1,0 +1,3 @@
+<!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
+
+This project is a C# .NET 8.0 Windows Forms application for streaming audio from a host to clients over encrypted TCP. The app features a modern, minimalistic GUI. On startup, the user chooses Host or Client mode. Host: selects audio sources, sets password, streams encrypted audio to clients over TCP. Client: connects to host with IP and password, receives and decrypts audio, can adjust playback volume. All communication is encrypted and password protected. Target: easy double-clickable .exe for Windows users.
