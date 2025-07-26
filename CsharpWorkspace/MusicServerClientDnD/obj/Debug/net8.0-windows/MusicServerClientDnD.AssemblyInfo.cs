@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MusicServerClientDnD")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c9eddcf11274c4a524b64cf2da258e1121f4b1e4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2fee6b06eb3c09618ce9e5d09e7155bda5f24172")]
 [assembly: System.Reflection.AssemblyProductAttribute("MusicServerClientDnD")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MusicServerClientDnD")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

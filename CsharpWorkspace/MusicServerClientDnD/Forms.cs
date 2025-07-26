@@ -22,6 +22,7 @@ namespace MusicServerClientDnD
         private ListBox audioSourcesList;
         private Button backButton;
         private Label ipLabel;
+        private Label publicIpLabel;
         private TcpListener? server;
         private CancellationTokenSource? cts;
         private List<string> audioSources;
@@ -34,19 +35,23 @@ namespace MusicServerClientDnD
         public HostForm()
         {
             this.Text = "Host - MusicServerClientDnD";
-            this.Size = new Size(400, 450);
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
+            this.Size = new Size(500, 500);
+            this.MinimumSize = new Size(400, 400);
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            this.MaximizeBox = true;
+            this.MinimizeBox = true;
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(30, 30, 30);
+            this.AutoScaleMode = AutoScaleMode.Font;
+            this.AutoScroll = true;
 
             infoLabel = new Label() { Text = "Set a password and select an audio source to stream:\n(For per-app capture, use a tool like Virtual Audio Cable)", ForeColor = Color.White, Dock = DockStyle.Top, Height = 60, TextAlign = ContentAlignment.MiddleCenter };
             passwordBox = new TextBox() { PlaceholderText = "Password", UseSystemPasswordChar = true, Width = 200, Top = 70, Left = 100 };
             audioSourcesList = new ListBox() { Top = 120, Left = 50, Width = 300, Height = 120 };
             startButton = new Button() { Text = "Start Hosting", Top = 260, Left = 120, Width = 150, Height = 40, BackColor = Color.FromArgb(60, 120, 200), ForeColor = Color.White };
             backButton = new Button() { Text = "Back", Top = 320, Left = 10, Width = 80, Height = 30 };
-            ipLabel = new Label() { Text = "Your IP: " + GetLocalIPAddress(), ForeColor = Color.LightGray, Top = 370, Left = 10, Width = 380, Height = 30 };
+            ipLabel = new Label() { Text = "Your Local IP: " + GetLocalIPAddress(), ForeColor = Color.LightGray, Top = 370, Left = 10, Width = 380, Height = 20 };
+            publicIpLabel = new Label() { Text = "Your Public IP: Retrieving...", ForeColor = Color.LightGray, Top = 390, Left = 10, Width = 380, Height = 20 };
 
             startButton.Click += StartButton_Click;
             backButton.Click += (s, e) => { StopServer(); this.Close(); };
@@ -57,6 +62,7 @@ namespace MusicServerClientDnD
             this.Controls.Add(startButton);
             this.Controls.Add(backButton);
             this.Controls.Add(ipLabel);
+            this.Controls.Add(publicIpLabel);
 
             // List output devices (default and others)
             deviceEnumerator = new MMDeviceEnumerator();
@@ -65,6 +71,8 @@ namespace MusicServerClientDnD
             foreach (var dev in devices) audioSourcesList.Items.Add(dev.FriendlyName);
             if (audioSourcesList.Items.Count == 0)
                 audioSourcesList.Items.Add("No output devices found");
+
+            _ = SetPublicIpAsync();
         }
 
         private string GetLocalIPAddress()
@@ -144,6 +152,20 @@ namespace MusicServerClientDnD
             lock (clients) foreach (var c in clients) c.Close();
             clients.Clear();
         }
+
+        private async Task SetPublicIpAsync()
+        {
+            try
+            {
+                using var client = new HttpClient();
+                string ip = await client.GetStringAsync("https://api.ipify.org");
+                publicIpLabel.Invoke(() => publicIpLabel.Text = $"Your Public IP: {ip.Trim()}");
+            }
+            catch
+            {
+                publicIpLabel.Invoke(() => publicIpLabel.Text = "Your Public IP: (unavailable)");
+            }
+        }
     }
 
     public class ClientForm : Form
@@ -164,12 +186,15 @@ namespace MusicServerClientDnD
         public ClientForm()
         {
             this.Text = "Client - MusicServerClientDnD";
-            this.Size = new Size(400, 350);
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
+            this.Size = new Size(500, 400);
+            this.MinimumSize = new Size(400, 300);
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            this.MaximizeBox = true;
+            this.MinimizeBox = true;
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(30, 30, 30);
+            this.AutoScaleMode = AutoScaleMode.Font;
+            this.AutoScroll = true;
 
             infoLabel = new Label() { Text = "Connect to a host:", ForeColor = Color.White, Dock = DockStyle.Top, Height = 40, TextAlign = ContentAlignment.MiddleCenter };
             ipBox = new TextBox() { PlaceholderText = "Host IP", Width = 200, Top = 50, Left = 100 };
